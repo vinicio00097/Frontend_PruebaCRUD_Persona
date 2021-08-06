@@ -1,0 +1,182 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<div id="personas">
+    <v-app>
+        <v-dialog>
+
+            <v-card>
+                <v-card-title>Eliminación de persona</v-card-title>
+                <v-card-text>
+                    ¿Desea eliminar a la persona?
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text v-on:click>Cancelar</v-btn>
+                    <v-btn text>Eliminar</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <v-dialog v-model="edicionDialogo">
+            <v-card>
+                <v-card-title>Edición de persona</v-card-title>
+                <v-card-text>
+                    <v-text-field outlined label="Nombres"
+                                  v-model="persona.nombres">
+
+                    </v-text-field>
+                    <v-text-field outlined label="Apellidos"
+                                  v-model="persona.apellidos">
+
+                    </v-text-field>
+                    <v-text-field outlined label="DPI"
+                                  v-model="persona.dpi">
+
+                    </v-text-field>
+
+                    <v-text-field outlined label="Dirección"
+                                  v-model="persona.direccion">
+
+                    </v-text-field>
+                    <v-checkbox label="Género" v-model="persona.genero">
+
+                    </v-checkbox>
+                    <v-text-field outlined label="Fecha nacimiento"
+                                  v-model="persona.fechanacimiento">
+
+                    </v-text-field>
+                    <v-text-field outlined label="Escolaridad"
+                                  v-model="persona.escolaridad">
+
+                    </v-text-field>
+                    <v-checkbox label="Activo" v-model="persona.activo">
+
+                    </v-checkbox>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text v-on:click="edicionDialogo=false">Cancelar</v-btn>
+                    <v-btn text>Editar</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <h1>Index</h1>
+
+        <p>
+            <a asp-action="Create">Create New</a>
+        </p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Nombres
+                    </th>
+                    <th>
+                        Apellidos
+                    </th>
+                    <th>
+                        Dpi
+                    </th>
+                    <th>
+                        Dirección
+                    </th>
+                    <th>
+                        Género
+                    </th>
+                    <th>
+                        Fecha de nacimiento
+                    </th>
+                    <th>
+                        Escolaridad
+                    </th>
+                    <th>
+                        Activo
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(persona,index) in personasData">
+                    <td>
+                        {{persona.nombres}}
+                    </td>
+                    <td>
+                        {{persona.apellidos}}
+                    </td>
+                    <td>
+                        {{persona.dpi}}
+                    </td>
+                    <td>
+                        {{persona.direccion}}
+                    </td>
+                    <td>
+                        {{persona.genero}}
+                    </td>
+                    <td>
+                        {{persona.fechaNacimiento}}
+                    </td>
+                    <td>
+                        {{persona.escolaridad}}
+                    </td>
+                    <td>
+                        {{persona.activo}}
+                    </td>
+                    <td>
+                        <button v-on:click="onedit">Editar</button>
+                        <button v-on:click="ondelete">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </v-app>
+</div>
+@section Scripts{ 
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+
+<script>
+        var app = new Vue({
+            el: '#personas',
+            vuetify: new Vuetify(),
+            data: {
+                personasData: [],
+                edicionDialogo: false,
+                eliminacionDialogo:false,
+                persona: {
+                    nombres: "",
+                    apellidos: "",
+                    dpi: "",
+                    direccion: "",
+                    genero: false,
+                    fechaNacimiento: "",
+                    escolaridad: "",
+                    activo:false
+                }
+            },
+            methods: {
+                onedit() {
+                    this.edicionDialogo = true;
+                },
+                ondelete() {
+                    console.log("eliminar");
+                },
+                loadPersonas() { return axios.get("https://localhost:44301/Personas") },
+                async loadAll() {
+                    axios.all([this.loadPersonas()]).then((response) => {
+                        if (response[0].status == 200)
+                            if (response[0].data.code == 1) 
+                                this.personasData = response[0].data.data;
+                    });
+                }
+            },
+            created() {
+                this.loadAll();
+                console.log("creado personas");
+            }
+        })
+</script>
+}
